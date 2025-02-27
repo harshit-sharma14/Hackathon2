@@ -138,10 +138,11 @@ mongoose
       
           const result = await model.generateContent(prompt);
           const responseText = result.response.text();
-      
+          
           // Parse MCQs from the response
           const mcqQuestions = responseText.split("\n\n").map(block => {
             const lines = block.split("\n");
+            // console.log('lines',lines)
             const question = lines[0].replace("Question: ", "").trim();
             const options = [
               lines[1].replace("A) ", "").trim(),
@@ -163,32 +164,77 @@ mongoose
       };
     
     // Evaluate Answers and Assign a Level
-    const evaluateAnswers = async (req, res) => {
-        const { userId, skill, answers } = req.body;
-        if (!userId || !skill || !answers) return res.status(400).json({ error: "Missing data" });
+    // const evaluateAnswers = async (req, res) => {
+    //     const { userId, skill, answers } = req.body;
+    //     if (!userId || !skill || !answers) return res.status(400).json({ error: "Missing data" });
       
-        try {
+    //     try {
+    //       const questions = await Question.find({ skill });
+    //       let correctCount = 0;
+      
+    //       questions.forEach((q, index) => {
+    //         // Ensure q.answer is a string and not null/undefined
+    //         if (typeof q.answer === 'string' && answers[index]?.trim().toLowerCase() === q.answer.trim().toLowerCase()) {
+    //           correctCount++;
+    //         }
+    //       });
+      
+    //       let level;
+    //       if (correctCount <= 3) level = "Beginner";
+    //       else if (correctCount <= 6) level = "Intermediate";
+    //       else if (correctCount <= 8) level = "Advanced";
+    //       else level = "Expert";
+      
+    //       res.status(200).json({ success: true, level, correctCount });
+    //     } catch (error) {
+    //       res.status(500).json({ error: error.message });
+    //     }
+    //   };
+    const evaluateAnswers = async (req, res) => {
+      const { userId, skill, answers } = req.body;
+      console.log(req.body)
+      if (!userId || !skill || !answers) {
+          return res.status(400).json({ error: "Missing data" });
+      }
+  
+      try {
           const questions = await Question.find({ skill });
           let correctCount = 0;
-      
+  
           questions.forEach((q, index) => {
-            // Ensure q.answer is a string and not null/undefined
-            if (typeof q.answer === 'string' && answers[index]?.trim().toLowerCase() === q.answer.trim().toLowerCase()) {
-              correctCount++;
-            }
+              // Ensure q.answer is an array and compare it correctly
+              if (Array.isArray(q.answer) && answers[index]) {
+                  const correctAnswer = q.answer[0]?.trim().toLowerCase(); // Extract correct answer from array
+                  if (answers[index].trim().toLowerCase() === correctAnswer) {
+                      correctCount++;
+                  }
+              }
           });
-      
+  
+          // Determine user level based on correct answers
           let level;
           if (correctCount <= 3) level = "Beginner";
           else if (correctCount <= 6) level = "Intermediate";
           else if (correctCount <= 8) level = "Advanced";
           else level = "Expert";
-      
-          res.status(200).json({ success: true, level, correctCount });
-        } catch (error) {
+  
+          // Save the result in the database
+          const userResult = new UserResult({
+              userId,
+              skill,
+              score: correctCount,
+              level,
+          });
+  
+          await userResult.save();
+  
+          res.status(200).json({ success: true, level, correctCount, result: userResult });
+      } catch (error) {
+          console.error("Error evaluating answers:", error);
           res.status(500).json({ error: error.message });
-        }
-      };
+      }
+  };
+  
     app.post("/generate-questions", generateSkillQuestions);
     app.post("/evaluate", evaluateAnswers);
     // const generateSkillQuestions = async (req, res) => {
@@ -450,5 +496,39 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
         res.status(400).json({ error: "No file or URL provided" });
     }
 });
+
+app.post("/api/user-results", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: "User ID is required" });
+
+    const results = await UserResult.find({ userId });
+
+    if (!results.length) {
+      return res.status(404).json({ message: "No results found for this user" });
+    }
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching user results" });
+  }
+});
+app.get("/api/user-results", async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ error: "User ID is required" });
+
+    const results = await UserResult.find({ userId });
+
+    if (!results.length) {
+      return res.status(404).json({ message: "No results found for this user" });
+    }
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching user results" });
+  }
+});
+
 
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

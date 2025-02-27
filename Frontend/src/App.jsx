@@ -6,6 +6,7 @@ import axios from 'axios'
 import Login from './components/Login'
 import ResumeUploader from './components/ResumeUploader'
 import SkillAssessment from './components/SkillAssessment'
+import Dashboard from './components/Dashboard'
 axios.defaults.baseURL = 'http://localhost:5000'
 axios.defaults.withCredentials = true
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
     <Route path='/register' element={<Register/>}/>
     <Route path='/resume' element={<ResumeUploader/>}/>
     <Route path='/eval' element={<SkillAssessment/>}/>
+    <Route path='/dashboard' element={<Dashboard/>}/>
 
     
     </Routes>
