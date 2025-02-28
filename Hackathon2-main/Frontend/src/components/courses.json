@@ -1,0 +1,53 @@
+// src/data/courses.json
+[
+    {
+      "id": 1,
+      "title": "The Complete JavaScript Course 2024: From Zero to Expert!",
+      "domain": "Software Development",
+      "field": "Web Development",
+      "skills": ["JavaScript", "ES6", "React", "Node.js"],
+      "level": "Beginner",
+      "platform": "Udemy",
+      "link": "https://www.udemy.com/course/the-complete-javascript-course/"
+    },
+    {
+      "id": 2,
+      "title": "React - The Complete Guide (incl Hooks, React Router, Redux)",
+      "domain": "Software Development",
+      "field": "Web Development",
+      "skills": ["React", "JavaScript", "Redux", "React Router"],
+      "level": "Intermediate",
+      "platform": "Udemy",
+      "link": "https://www.udemy.com/course/react-the-complete-guide-incl-hooks/"
+    },
+    {
+      "id": 3,
+      "title": "Node.js, Express, MongoDB & More: The Complete Bootcamp 2024",
+      "domain": "Software Development",
+      "field": "Web Development",
+      "skills": ["Node.js", "Express", "MongoDB", "REST API"],
+      "level": "Intermediate",
+      "platform": "Udemy",
+      "link": "https://www.udemy.com/course/nodejs-express-mongodb-bootcamp/"
+    },
+    {
+      "id": 4,
+      "title": "Python for Data Science and Machine Learning Bootcamp",
+      "domain": "Data Science",
+      "field": "Machine Learning",
+      "skills": ["Python", "Pandas", "NumPy", "Scikit-Learn"],
+      "level": "Beginner",
+      "platform": "Udemy",
+      "link": "https://www.udemy.com/course/python-for-data-science-and-machine-learning-bootcamp/"
+    },
+    {
+      "id": 5,
+      "title": "AWS Certified Solutions Architect - Associate 2024",
+      "domain": "Cloud Computing",
+      "field": "AWS",
+      "skills": ["AWS", "Cloud Computing", "DevOps"],
+      "level": "Advanced",
+      "platform": "Udemy",
+      "link": "https://www.udemy.com/course/aws-certified-solutions-architect-associate-saa-c03/"
+    }
+  ]
